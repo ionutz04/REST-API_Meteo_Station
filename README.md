@@ -117,7 +117,7 @@ Environment variables in `REST_API_SERVER_docker_container/docker-compose.yml`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `REDIS_HOST` | `192.168.0.177` | Redis server IP address |
+| `REDIS_HOST` | `your local address of the server (if you run this env locally, not globally)` | Redis server IP address |
 | `REDIS_PORT` | `6379` | Redis server port |
 
 ### Redis
@@ -126,13 +126,13 @@ Environment variables in `redis_docker_container/docker-compose.yml`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `REDIS_PASSWORD` | `ionutqwerty` | Redis authentication password |
+| `REDIS_PASSWORD` | `your_secret_password` | Redis authentication password |
 
 ### Grafana
 
 Default credentials:
 - **Username:** `admin`
-- **Password:** `ionutqwerty`
+- **Password:** `your_secret_password`
 - **URL:** `http://localhost:3000`
 
 ### Grafana Data Source Configuration
@@ -141,7 +141,7 @@ Default credentials:
 2. Go to **Configuration** → **Data Sources**
 3. Add **Redis** data source:
    - Host: `<REDIS_HOST>:6379`
-   - Password: `ionutqwerty`
+   - Password: `it works right away with no password, but if you set one in redis_docker_container/docker-compose.yml, use it here.`
 
 ## � How It Works
 
