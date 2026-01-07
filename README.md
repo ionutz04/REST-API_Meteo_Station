@@ -193,6 +193,17 @@ ts.add("sensor:humidity2", ts_ms, float(humidity_pct))
 - HTTPS with SSL/TLS encryption (requires `jetson.crt` and `jetson.key`)
 - Runs on port 5000 with host network mode for direct access
 
+**How to create the certificates**
+```bash
+  openssl genrsa -out ca.key 4096
+  openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650   -out ca.pem   -subj "/CN=sht21_demo"
+  openssl genrsa -out jetson.key 2048
+  openssl req -new -key jetson.key -out jetson.csr   -subj "/CN=192.168.0.177"
+  openssl x509 -req -in jetson.csr -CA ca.pem -CAkey ca.key   -CAcreateserial -out jetson.crt -days 365 -sha256
+```
+>### DISCLAIMER:
+>If you generate the certificates using the above commands, the ESP32 will throw an error because it does not trust the self-signed CA. You will need to extract the public key from `ca.pem` and include it in the ESP32 firmware for it to trust the server. In the provided ESP32 firmware, the certificate is the one generated for this demo, is not a generic one.
+
 ### 3. Redis TimeSeries Storage
 
 Redis with the **TimeSeries** module provides efficient time-series data storage:
@@ -445,10 +456,7 @@ sht21_REST_API/
 ├── README.md                           # This file
 ├── extract_csv.py                      # Export Redis data to CSV
 ├── plot_data.py                        # Generate data visualizations
-├── sensor_data.csv                     # Exported combined data
-├── sensor_data_sensor_temperature.csv  # Temperature data export
-├── sensor_data_sensor_humidity.csv     # Humidity data export
-├── esp32_restAPI_implementation/       # ESP32 PlatformIO project
+├── firmware.hex                       # ESP32 PlatformIO project (firmware provided in .hex format)
 │   ├── platformio.ini
 │   ├── src/                            # Source code
 │   ├── include/
