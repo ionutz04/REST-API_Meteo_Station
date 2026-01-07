@@ -3,3 +3,17 @@
 *.crt
 *.csr
 */venv
+*.csv
+*venv*/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+.idea/
+.vscode/
+*.log
+node_modules/
+dist/
+build/
+esp32_restAPI_implementation/*

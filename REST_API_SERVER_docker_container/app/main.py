@@ -3,6 +3,9 @@ import os
 import redis
 from datetime import datetime, timezone
 
+def now_utc_ms() -> int:
+    dt = datetime.now(timezone.utc)          # current UTC time
+    return int(dt.timestamp() * 1000)        # ms since epoch [web:103][web:106]
 
 def iso_to_unix_ms(iso_str: str) -> int:
     dt = datetime.fromisoformat(iso_str)  # '2025-12-24T18:41:17'
@@ -28,11 +31,11 @@ def init_timeseries():
 
 def save_reading(temp_c, humidity_pct, esp_timestamp_str):
     ts = r.ts()
-    ts_ms = iso_to_unix_ms(esp_timestamp_str)
+    ts_ms = now_utc_ms()
 
     # Add to two separate time series
-    ts.add("sensor:temperature", ts_ms, float(temp_c))
-    ts.add("sensor:humidity",   ts_ms, float(humidity_pct))
+    ts.add("sensor:temperature2", ts_ms, float(temp_c))
+    ts.add("sensor:humidity2",   ts_ms, float(humidity_pct))
 
 app = Flask(__name__)
 @app.route("/sensor", methods=["POST"])
@@ -48,5 +51,5 @@ def sensor():
 if __name__ == "__main__":
     app.run(host="0.0.0.0",
             port=5000,
-            ssl_context=("jetson.crt", "jetson.key"))
+            ssl_context=("jetson.crt", "jetson.key"), debug = True)
 
