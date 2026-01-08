@@ -1,5 +1,5 @@
 # SHT21 REST API - IoT Temperature & Humidity Monitoring System
-
+Colaborators: Ionescu Ionut, Sandu Laura Florentina
 A complete IoT monitoring solution for collecting temperature and humidity data from SHT21 sensors using ESP32 microcontrollers, storing data in Redis TimeSeries, and visualizing with Grafana.
 
 ## 📋 Table of Contents
