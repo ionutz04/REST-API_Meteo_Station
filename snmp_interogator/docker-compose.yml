@@ -1,12 +1,10 @@
 services:
-  flask-api:
+  snmp-interogator:
     build:
       context: ./build
       dockerfile: Dockerfile
-    container_name: sht21_rest_api_server
+    container_name: snmp_interogator
     network_mode: "host"
-    ports:
-      - "5500:5500"
     volumes:
       - ./app:/app
     environment:

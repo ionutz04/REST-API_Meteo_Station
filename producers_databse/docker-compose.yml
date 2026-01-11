@@ -1,0 +1,18 @@
+services:
+  producers_database:
+    image: mysql:8.0
+    container_name: producers_database
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ionutqwerty
+      MYSQL_DATABASE: PRODUCERS
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: ionutqwerty
+    ports:
+      - "3306:3306"
+    volumes:
+      - producers_data:/var/lib/mysql
+
+volumes:
+  producers_data:
