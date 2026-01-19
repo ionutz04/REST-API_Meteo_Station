@@ -6,4 +6,4 @@ services:
       - REDIS_PASSWORD=ionutqwerty
     ports:
       - "6379:6379"
-
+    restart: unless-stopped
