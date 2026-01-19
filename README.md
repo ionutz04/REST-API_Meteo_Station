@@ -1,4 +1,5 @@
-# 🌦️ ESP32 Weather Station - IoT Meteostation Project
+# SHT21 REST API - IoT Temperature & Humidity Monitoring System
+Colaborators: Ionescu Ionut, Sandu Laura Florentina
 
 ---
 
