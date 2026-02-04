@@ -15,7 +15,7 @@ from gunicorn.app.base import BaseApplication
 SECRET_KEY = "V3fryS3cr3tK3y,7h47Y0uC4n7F1nd:)!"
 
 REDIS_CONFIG = {
-    'host': os.environ.get("REDIS_HOST", "192.168.0.177"),
+    'host': os.environ.get("REDIS_HOST", "192.168.50.1"),
     'port': int(os.environ.get("REDIS_PORT", "6379")),
     'password': None,
     'db': 0,
@@ -25,7 +25,7 @@ REDIS_CONFIG = {
 MYSQL_CONFIG = {
     'user': 'admin',
     'password': 'ionutqwerty',
-    'host': '192.168.0.177',
+    'host': '192.168.50.1',
     'port': '3306',
     'database': 'PRODUCERS'
 }
@@ -41,7 +41,8 @@ def get_redis():
 
 def send_data_redis(chip_id: str, temperature: float, humidity: float, 
                     wind_speed: float, rainfall: float, 
-                    wind_direction_degrees: float, wind_direction_voltages: float):
+                    wind_direction_degrees: float,
+                    dust: float, pressure: float = 0.0, altitude: float = 0.0):
     r = get_redis()
     ts = r.ts()
     timestamp = int(psutil.time.time() * 1000)
@@ -52,14 +53,16 @@ def send_data_redis(chip_id: str, temperature: float, humidity: float,
     pipe.add(f"sensor:{chip_id}:wind_speed", timestamp, wind_speed)
     pipe.add(f"sensor:{chip_id}:rainfall", timestamp, rainfall)
     pipe.add(f"sensor:{chip_id}:wind_direction_degrees", timestamp, wind_direction_degrees)
-    pipe.add(f"sensor:{chip_id}:wind_direction_voltages", timestamp, wind_direction_voltages)
+    pipe.add(f"sensor:{chip_id}:dust", timestamp, dust)  # Assuming dust value is 0 for now
+    pipe.add(f"sensor:{chip_id}:pressure", timestamp, pressure)
+    pipe.add(f"sensor:{chip_id}:altitude", timestamp, altitude)
     pipe.execute()
 
 def init_timeseries(chip_id: str):
     r = get_redis()
     ts = r.ts()
     keys = ["temperature", "humidity", "wind_speed", "rainfall", 
-            "wind_direction_degrees", "wind_direction_voltages"]
+            "wind_direction_degrees", "wind_direction_voltages", "dust", "pressure", "altitude"]
     for key in keys:
         if not r.exists(f"sensor:{chip_id}:{key}"):
             ts.create(f"sensor:{chip_id}:{key}")
@@ -180,10 +183,12 @@ def create_app():
             wind_speed = data.get('wind_speed')
             rainfall = data.get('rainfall')
             wind_direction_degrees = data.get('wind_direction_degrees')
-            wind_direction_voltages = data.get('wind_direction_voltage')
+            dust = data.get('dust')
+            pressure = data.get('pressure')
+            altitude = data.get('altitude')
             
             send_data_redis(chip_id, temperature, humidity, wind_speed, rainfall, 
-                          wind_direction_degrees, wind_direction_voltages)
+                          wind_direction_degrees, dust, pressure, altitude)
             
             ssid = data.get('ssid')
             cursor.execute("UPDATE PRODUCERS SET ssid = %s WHERE chip_id = %s", (ssid, chip_id))
