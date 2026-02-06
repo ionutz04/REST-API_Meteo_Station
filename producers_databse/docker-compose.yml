@@ -3,7 +3,15 @@ services:
     image: mysql:8.0
     container_name: producers_database
     restart: unless-stopped
-    command: --default-authentication-plugin=mysql_native_password
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --innodb-buffer-pool-size=32M
+      --innodb-log-buffer-size=1M
+      --max-connections=20
+      --key-buffer-size=8M
+      --tmp-table-size=8M
+      --max-heap-table-size=8M
+      --performance-schema=OFF
     environment:
       MYSQL_ROOT_PASSWORD: ionutqwerty
       MYSQL_DATABASE: PRODUCERS
@@ -13,6 +21,8 @@ services:
       - "3306:3306"
     volumes:
       - producers_data:/var/lib/mysql
+    mem_limit: 128m
+    memswap_limit: 128m
 
 volumes:
   producers_data:

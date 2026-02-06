@@ -3,6 +3,7 @@ version: "3.8"
 services:
   grafana:
     image: grafana/grafana:latest
+    network_mode: host  # Container shares host's network
     container_name: grafana
     restart: unless-stopped
     ports:
@@ -14,6 +15,14 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=ionutqwerty
       - GF_SERVER_DOMAIN=localhost
       - GF_USERS_DEFAULT_THEME=light
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    mem_limit: 256m
+    memswap_limit: 256m
 
 volumes:
   grafana-storage: {}
