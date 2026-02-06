@@ -17,3 +17,14 @@ node_modules/
 dist/
 build/
 *screenlog.0*
+*Gerber*
+*.gbr
+*.drl
+*.gbl
+*.gbo
+*.gbs
+*.gml
+*.gxl
+*meteo_station-backups/
+*plots/
+meteo_station/meteeo_station.zip
