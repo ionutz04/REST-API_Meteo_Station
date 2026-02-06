@@ -11,3 +11,5 @@ services:
       - REDIS_HOST=192.168.0.177
       - REDIS_PORT=6379
     restart: unless-stopped
+    mem_limit: 64m
+    memswap_limit: 64m

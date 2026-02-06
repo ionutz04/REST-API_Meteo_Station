@@ -227,7 +227,7 @@ def post_fork(server, worker):
 
 def main():
     workers = int(os.environ.get('GUNICORN_WORKERS', multiprocessing.cpu_count() * 2 + 1))
-    threads = int(os.environ.get('GUNICORN_THREADS', 2))
+    threads = int(os.environ.get('GUNICORN_THREADS', 3))
     
     options = {
         'bind': '0.0.0.0:5500',

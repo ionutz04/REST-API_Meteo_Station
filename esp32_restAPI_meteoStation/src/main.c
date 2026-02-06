@@ -90,8 +90,8 @@ const gpio_num_t rain_pin       = GPIO_NUM_33;
 const gpio_num_t wind_speed_pin = GPIO_NUM_32;
 
 #define LED_PIN                    4
-#define GP2Y_ADC_CHANNEL           ADC1_CHANNEL_6
-#define WIND_DIRECTION_ADC_CHANNEL ADC1_CHANNEL_7
+#define GP2Y_ADC_CHANNEL           ADC1_CHANNEL_6 
+#define WIND_DIRECTION_ADC_CHANNEL ADC1_CHANNEL_7 
 
 #define DEFAULT_VREF   1100
 #define NO_OF_SAMPLES  64
