@@ -15,14 +15,6 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=ionutqwerty
       - GF_SERVER_DOMAIN=localhost
       - GF_USERS_DEFAULT_THEME=light
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
-    mem_limit: 256m
-    memswap_limit: 256m
 
 volumes:
   grafana-storage: {}
