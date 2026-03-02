@@ -68,7 +68,42 @@ def save_csv(start_date, end_date ,target_col='temperature'):
     
     return df
     
+def forecast_multi_step(model, scaler, df, window_size=10, horizon=24, target_col='temperature'):
+    # df already contains the full history you trained on
+    df_tmp = df.copy()
+    df_tmp['timestamp'] = pd.to_datetime(df_tmp['timestamp'], unit='ms')
+    df_tmp.set_index('timestamp', inplace=True)
+    target_data = df_tmp[target_col].astype(float).values.reshape(-1, 1)
+
+    # Use the SAME scaler you used in training
+    target_scaled = scaler.transform(target_data)
+
+    # Take the last window_size scaled values
+    last_window = target_scaled[-window_size:]               # shape (window_size, 1)
+    last_window = last_window.reshape((1, window_size, 1))   # (1, window_size, 1)
+
+    future_scaled = []
+
+    window = last_window.copy()
+    for _ in range(horizon):
+        next_scaled = model.predict(window, verbose=0)       # (1, 1)
+        future_scaled.append(next_scaled[0, 0])
+
+        # append prediction and drop oldest step
+        next_step = next_scaled.reshape((1, 1, 1))           # (1,1,1)
+        window = np.concatenate([window[:, 1:, :], next_step], axis=1)
+
+    future_scaled = np.array(future_scaled).reshape(-1, 1)
+    future_values = scaler.inverse_transform(future_scaled).flatten()
+
+    # build future timestamps (assumes 1 sample == 1 hour)
+    last_ts = df_tmp.index[-1]
+    future_times = [last_ts + pd.Timedelta(hours=i+1) for i in range(horizon)]
+
+    return future_times, future_values
+
 def load_data(df, window_size=10, target_col='temperature'):
+    df = df.copy()
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
     df.set_index('timestamp', inplace=True)
     
@@ -108,27 +143,72 @@ def plot_predictions(Y_test, predictions):
     plt.ylabel('Temperature')
     plt.legend()
     plt.savefig('predictions.png')
-if __name__ == "__main__":
-    # Example usage (timestamps in milliseconds)
-    # now_ms = int(datetime.now().timestamp() * 1000)
-    # start_ms = now_ms - 1000 * 1000  # 1000 seconds ago
-    df = save_csv("-", "+", target_col='temperature')
-    X, Y, scaler = load_data(df, window_size=10, target_col='temperature')
-    # Reshape X for LSTM: (samples, timesteps, features)
-    X = X.reshape((X.shape[0], X.shape[1], 1))
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
-    model = train_lstm(X_train, Y_train)
-    model.compile(optimizer='adam', loss='mean_squared_error')
-    history = model.fit(X_train, Y_train, epochs=20, batch_size=32, validation_split=0.1)
+# if __name__ == "__main__":
+#     # Example usage (timestamps in milliseconds)
+#     # now_ms = int(datetime.now().timestamp() * 1000)
+#     # start_ms = now_ms - 1000 * 1000  # 1000 seconds ago
+#     df = save_csv("-", "+", target_col='temperature')
+#     X, Y, scaler = load_data(df, window_size=10, target_col='temperature')
+#     # Reshape X for LSTM: (samples, timesteps, features)
+#     X = X.reshape((X.shape[0], X.shape[1], 1))
+#     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+#     model = train_lstm(X_train, Y_train)
+#     model.compile(optimizer='adam', loss='mean_squared_error')
+#     history = model.fit(X_train, Y_train, epochs=20, batch_size=32, validation_split=0.1)
 
-    predictions = model.predict(X_test)
-    predictions = scaler.inverse_transform(predictions).flatten()
-    Y_test = scaler.inverse_transform(Y_test.reshape(-1,1)).flatten()
+#     predictions = model.predict(X_test)
+#     predictions = scaler.inverse_transform(predictions).flatten()
+#     Y_test = scaler.inverse_transform(Y_test.reshape(-1,1)).flatten()
     
-    rmse = np.sqrt(np.mean((Y_test - predictions)**2))
-    print(f'RMSE: {rmse:.2f}')
+#     rmse = np.sqrt(np.mean((Y_test - predictions)**2))
+#     print(f'RMSE: {rmse:.2f}')
         
-    plot_predictions(Y_test, predictions)
+#     plot_predictions(Y_test, predictions)
     
-    # print(start_ms, now_ms)
+#     # print(start_ms, now_ms)
     
+if __name__ == "__main__":
+    df = save_csv("-", "+", target_col='temperature')
+    window_size = 10
+
+    X, Y, scaler = load_data(df, window_size=window_size, target_col='temperature')
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+    model = train_lstm(X_train, Y_train)
+
+    # one-step test evaluation (optional)
+    preds_test = model.predict(X_test)
+    preds_test_inv = scaler.inverse_transform(preds_test).flatten()
+    Y_test_inv = scaler.inverse_transform(Y_test.reshape(-1,1)).flatten()
+    rmse = np.sqrt(np.mean((Y_test_inv - preds_test_inv)**2))
+    print(f'RMSE: {rmse:.2f}')
+
+    plot_predictions(Y_test_inv, preds_test_inv)
+
+    # ---- 24-hour forecast from end of series ----
+    horizon = 24
+    future_times, future_temps = forecast_multi_step(
+        model=model,
+        scaler=scaler,
+        df=df,
+        window_size=window_size,
+        horizon=horizon,
+        target_col='temperature'
+    )
+    time=[]
+    values=[]
+    for t, v in zip(future_times, future_temps):
+        print(t, v)
+        time.append(t)
+        values.append(v)
+        
+    plt.figure(figsize=(12,6))
+    plt.plot([t.strftime('%Y-%m-%d %H:%M:%S') for t in time], values, marker='o')
+    plt.title('24-Hour Temperature Forecast')
+    plt.xlabel('Time')
+    plt.ylabel('Temperature')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig('future_forecast.png')
