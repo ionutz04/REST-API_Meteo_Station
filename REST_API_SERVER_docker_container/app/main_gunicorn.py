@@ -25,7 +25,7 @@ REDIS_CONFIG = {
 MYSQL_CONFIG = {
     'user': 'admin',
     'password': 'ionutqwerty',
-    'host': '192.168.50.1',
+    'host': '192.168.88.168',
     'port': '3306',
     'database': 'PRODUCERS'
 }

@@ -1,0 +1,13 @@
+# Master Docker Compose file to manage all services
+# Usage:
+#   Start all:  docker compose up -d
+#   Stop all:   docker compose down
+#   Status:     docker compose ps
+#   Logs:       docker compose logs -f
+
+include:
+  - graphana_docker_container/docker-compose.yml
+  - producers_databse/docker-compose.yml
+  - redis_docker_container/docker-compose.yml
+  - REST_API_SERVER_docker_container/docker-compose.yml
+  - snmp_interogator/docker-compose.yml

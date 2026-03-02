@@ -57,7 +57,7 @@ def init_timeseries(chip_id: str):
 producers_database_config = {
     'user': 'admin',
     'password': 'ionutqwerty',
-    'host': '192.168.0.177',
+    'host': '127.0.0.1',
     'port': '3306',
     'database': 'PRODUCERS'
 }

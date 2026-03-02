@@ -94,25 +94,22 @@ This is not a copy-paste hobby project. It addresses a specific engineering cons
     * **Connectivity:** Migrated to Ad-Hoc WiFi network (Jetson as AP, ESP32 as STA) for isolated security because the real Meteo Stations are needed in isolated places, and the possibility of not having a wireless connection in order to connect the ESP32 to JON.
 
 ### 🚀 Future Roadmap
-* Implementation of a multi layer forecaster and orchestrator of the data:
-   1. On the 1st layer, it will be the classical model of time-series data forecasting, like ANIMA or Prophet, which will do the raw analysis over the data
-   2. On the 2nd layer, it will implemented a simple LLM (Large Language Model), which will decide which type of analysis is needed for this data, and some additional comments over the forecast.
+* Using the LTSM network it is planed for the final version for the Project presentation to be configured for forcasting
+* Also for this presentation, it is planed to create a custom dashboard for the time series graphs, also being able to have access to the forcasting tab.
 
-* Getting done the first prototipe board for this meter kit.
+### 📡 PCB design
+
+* 7th Febrary 2026: Getting done the first prototipe board for this meter kit.
 For now, the state in which stays the custom PCB which it was designed for this project is close to be the final one, the only modifications that are needed are regaring the footprint of the esp32 and sensors like SHT21, MS5611. The GP2Y will be soldered on the board using a JCTC connector, solderd directly on board.
 
+
+* 1st March 2026: Second prototipe board for the meter kit:
    Right now, this is the state in which the project is:
-
-   - PCB:
-
-   ![alttext](./images/image.png)
-   ![alt text](back.png)
 
    - 3D view:
 
-   ![alt text](./images/image-1.png)
-
-   ![alt text](./images/image-2.png)
+   ![alt text](./images/front_3d.png)
+![alt text](./images/back_3d.png)
 
    - Schematic:
-   ![alt text](./images/image-4.png)
+   ![alt text](./images/schematic.png)

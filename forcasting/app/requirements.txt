@@ -1,0 +1,23 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.5
+tensorflow
+pydantic==2.9.0
+
+# Time-series / data
+numpy<2
+pandas
+scikit-learn
+matplotlib
+
+# Deep learning – PyTorch is already in the base image; do NOT reinstall torch/torchvision
+# torch
+# torchvision
+
+# # Optional: if you want to serve from ONNX later
+# onnx
+# onnxruntime-gpu
+
+# Optional: DB client depending on what you use
+# psycopg2-binary   # PostgreSQL
+# pymongo           # MongoDB
+# mysqlclient       # MySQL
