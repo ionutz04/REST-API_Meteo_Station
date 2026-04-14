@@ -1,17 +1,21 @@
 services:
   grafana:
     image: grafana/grafana:latest
-    network_mode: host  # Container shares host's network
+    network_mode: host
     container_name: grafana
     restart: unless-stopped
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./plugins:/var/lib/grafana/plugins
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=ionutqwerty
       - GF_SERVER_DOMAIN=localhost
       - GF_USERS_DEFAULT_THEME=light
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=ionut-cam-proxy-datasource
+      - GF_LOG_LEVEL=debug
+      - GF_PANELS_DISABLE_SANITIZE_HTML=true
+      - CAM_PROXY_BASE_URL=https://esp-cam.iground.eu
 
 volumes:
   grafana-storage: {}
-

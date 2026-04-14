@@ -1,0 +1,19 @@
+{
+  "$schema": "https://grafana.com/schemas/plugin/v2.json",
+  "type": "app",
+  "id": "ionut-cam-proxy-datasource",
+  "name": "Ionut Cam Proxy Datasource",
+  "info": {
+    "description": "Backend app plugin that proxies ESP32-CAM snapshot/stream resources through Grafana",
+    "author": { "name": "Ionut / ChatGPT" },
+    "keywords": ["camera", "proxy", "grafana", "esp32-cam"],
+    "version": "0.0.1",
+    "logos": { "small": "img/logo.svg", "large": "img/logo.svg" }
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  },
+  "backend": true,
+  "executable": "gpx_ionut_cam_proxy_datasource"
+}

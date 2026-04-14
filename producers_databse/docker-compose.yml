@@ -22,8 +22,6 @@ services:
       - "3306:3306"
     volumes:
       - producers_data:/var/lib/mysql
-    mem_limit: 128m
-    memswap_limit: 128m
 
 volumes:
   producers_data:

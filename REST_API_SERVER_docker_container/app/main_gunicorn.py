@@ -25,8 +25,8 @@ REDIS_CONFIG = {
 MYSQL_CONFIG = {
     'user': 'admin',
     'password': 'ionutqwerty',
-    'host': '192.168.88.168',
-    'port': '3306',
+    'host': os.environ.get("MYSQL_HOST", "192.168.50.1"),
+    'port': int(os.environ.get("MYSQL_PORT", "3306")),
     'database': 'PRODUCERS'
 }
 
@@ -42,7 +42,7 @@ def get_redis():
 def send_data_redis(chip_id: str, temperature: float, humidity: float, 
                     wind_speed: float, rainfall: float, 
                     wind_direction_degrees: float,
-                    dust: float, pressure: float = 0.0, altitude: float = 0.0):
+                    dust: float, pressure: float = 0.0, altitude: float = 0.0, battery_percentage = 0.0):
     r = get_redis()
     ts = r.ts()
     timestamp = int(psutil.time.time() * 1000)
@@ -56,13 +56,14 @@ def send_data_redis(chip_id: str, temperature: float, humidity: float,
     pipe.add(f"sensor:{chip_id}:dust", timestamp, dust)  # Assuming dust value is 0 for now
     pipe.add(f"sensor:{chip_id}:pressure", timestamp, pressure)
     pipe.add(f"sensor:{chip_id}:altitude", timestamp, altitude)
+    pipe.add(f"sensor:{chip_id}:battery", timestamp, battery_percentage)
     pipe.execute()
 
 def init_timeseries(chip_id: str):
     r = get_redis()
     ts = r.ts()
     keys = ["temperature", "humidity", "wind_speed", "rainfall", 
-            "wind_direction_degrees", "wind_direction_voltages", "dust", "pressure", "altitude"]
+            "wind_direction_degrees", "wind_direction_voltages", "dust", "pressure", "altitude", "battery"]
     for key in keys:
         if not r.exists(f"sensor:{chip_id}:{key}"):
             ts.create(f"sensor:{chip_id}:{key}")
@@ -186,9 +187,9 @@ def create_app():
             dust = data.get('dust')
             pressure = data.get('pressure')
             altitude = data.get('altitude')
-            
+            battery = float(data.get('battery_voltage'))
             send_data_redis(chip_id, temperature, humidity, wind_speed, rainfall, 
-                          wind_direction_degrees, dust, pressure, altitude)
+                          wind_direction_degrees, dust, pressure, altitude, battery)
             
             ssid = data.get('ssid')
             cursor.execute("UPDATE PRODUCERS SET ssid = %s WHERE chip_id = %s", (ssid, chip_id))

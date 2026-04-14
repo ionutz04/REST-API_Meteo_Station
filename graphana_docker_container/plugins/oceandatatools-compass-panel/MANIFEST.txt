@@ -1,0 +1,38 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "community",
+  "signedByOrg": "oceandatatools",
+  "signedByOrgName": "oceandatatools",
+  "plugin": "oceandatatools-compass-panel",
+  "version": "2.1.3",
+  "time": 1767537082820,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "CHANGELOG.md": "a7d7be2ca0a4cb76a65b9918c4b227bfc9ae775a2eed0f041d9c3b277e158f9d",
+    "LICENSE": "df1b4e27e8fcf13bbc8091e0b1c77153eee8f2d101a7661c3798f0cd8213410f",
+    "screenshots/wind-with-spd.png": "449b222bee7c01947d114048fa9694fbb0cbf3e9f3838d3e5afa3090069734d3",
+    "screenshots/compass-with-custom-styling.png": "b8dba4e5f9e960616a2508baffc61c660f866e07a73baef29b872dc9d35481f5",
+    "screenshots/compass-with-arrow.png": "fbf29af5683f34cfe41dc79b006c3b7877311837e7d293739258803eb93c8de2",
+    "screenshots/compass-with-ship-profile.png": "4145ce6ad2f8acb6d8037dba6e03036b68fe18f6f787ed62a94cdfce4aa4b22d",
+    "screenshots/wind-without-spd.png": "57ed05ce9d6b88ac366961b697c7d2d81b4186b4e98d5226c5db37bd11b9839c",
+    "screenshots/compass-with-needle.png": "5826435d576a6732f3d0944381cbde1e9d13f142a6a1351c36ed363671dd29d5",
+    "module.js": "29d54c419f78d19c69b68b03eb72f8daea196c230aee40d2d6916a36537ae17d",
+    "img/logo.svg": "a3102854750f3c0dc22e6423972bb3ebf648c2c1f0152fe18e1d2e2c2e52ee01",
+    "README.md": "539b77aac57e0a461b7f184d3ff9782e62d0191490bed9e804f7f4c3756f4be1",
+    "module.js.map": "3afc92a53244405c7adc2e53f10d6cd25b848c238a0855d51b7b61f096b295fe",
+    "plugin.json": "6820d16dfd52333fa24e8cc0fd23b58e2aca4d8bb05c8073cd62f64b1b3bb485"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+
+wsA9BAETCgBtBYJpWnm6CRB+TQxqcIhm50UUAAAAAAAcACBzYWx0QG5vdGF0
+aW9ucy5vcGVucGdwanMub3JnXI5xfJeIJWqboObSC0jU+A69v84cVXOCGbA5
+vZQ3TuYWIQTzOyW2kQdOhGNlcPN+TQxqcIhm5wAAOLMCCLVU12giEW+ugLTW
+rFTvOTu3M+7A8GoMQUeRVr5s+XExFum3hHae2Yq/zKpxCpr3B3tuGT9rCEv7
+1YyYbZPFNQGUAgiSoYwYmbD9rZ1b8XfPfsvNOBqf/HSEMEILq9d55krNzfHH
+TradejAmvnASQ+VqwtAr2Uj0XvhmlsVOvnp6a76lSg==
+=ipcy
+-----END PGP SIGNATURE-----
