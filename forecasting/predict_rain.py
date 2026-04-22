@@ -25,7 +25,7 @@ from tensorflow.keras import regularizers
 # -------------------------------------------------------------------
 # CONFIG
 # -------------------------------------------------------------------
-REDIS_HOST = "192.168.88.168"
+REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
 REDIS_PATTERN = "sensor:264041591600404:*"

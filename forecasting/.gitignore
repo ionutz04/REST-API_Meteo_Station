@@ -1,0 +1,7 @@
+*.h5
+*.png
+*debug*
+*.log
+*.csv
+*.html
+models/
