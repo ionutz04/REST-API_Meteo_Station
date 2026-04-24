@@ -133,6 +133,32 @@ def _clip_outliers_iqr(series: pd.Series, k: float = 3.0) -> pd.Series:
     return series.clip(lower=q1 - k * iqr, upper=q3 + k * iqr)
 
 
+def _hampel_filter(series: pd.Series, window: int = 7, n_sigmas: float = 3.0) -> pd.Series:
+    """
+    Hampel filter: replaces samples that deviate from the local median by
+    more than `n_sigmas` * (1.4826 * MAD) with the local median itself.
+
+    - `window` is the FULL window size (centered, must be odd-ish).
+    - 1.4826 is the Gaussian-consistency scaling for MAD.
+    - Robust to single-sample spikes; preserves real step changes much
+      better than a mean filter.
+    """
+    s = series.astype(float).copy()
+    half = max(window // 2, 1)
+    win = 2 * half + 1
+
+    rolling = s.rolling(window=win, center=True, min_periods=1)
+    med = rolling.median()
+    mad = rolling.apply(lambda x: np.nanmedian(np.abs(x - np.nanmedian(x))), raw=True)
+    threshold = n_sigmas * 1.4826 * mad
+
+    # Where MAD is 0 (flat region), don't flag anything.
+    diff = (s - med).abs()
+    mask = (threshold > 0) & (diff > threshold)
+    s[mask] = med[mask]
+    return s
+
+
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy().sort_values("timestamp").reset_index(drop=True)
 
@@ -157,18 +183,26 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     df[required_cols] = df[required_cols].fillna(df[required_cols].median())
 
     # --- NOISE REDUCTION ---
-    # 1) IQR-based outlier clipping (caps extreme sensor spikes)
+    # Pipeline (order matters): Hampel -> rolling median -> IQR clip -> EMA.
+    # 1) Hampel filter: kills isolated sensor spikes (e.g. a 15°C->12°C
+    #    single-sample drop) by replacing them with the local median.
+    #    Window=7 with 5-min buckets ≈ 35 min context.
+    spike_cols = ["temperature", "humidity", "pressure"]
+    for col in spike_cols:
+        df[col] = _hampel_filter(df[col], window=7, n_sigmas=3.0)
+
+    # 2) Rolling median (5-sample, centered) smooths residual jitter while
+    #    preserving step edges better than a mean filter.
+    median_cols = ["temperature", "humidity", "pressure"]
+    for col in median_cols:
+        df[col] = df[col].rolling(5, min_periods=1, center=True).median()
+
+    # 3) IQR-based clipping as a final safety net for any extreme survivors.
     clip_cols = ["temperature", "humidity", "pressure", "wind_speed"]
     for col in clip_cols:
         df[col] = _clip_outliers_iqr(df[col], k=3.0)
 
-    # 2) Median filter (kernel=3) removes single-sample spikes while
-    #    preserving step edges better than a mean filter.
-    median_cols = ["temperature", "humidity", "pressure"]
-    for col in median_cols:
-        df[col] = df[col].rolling(3, min_periods=1, center=True).median()
-
-    # 3) Light exponential moving average to smooth residual jitter.
+    # 4) Light exponential moving average to smooth high-frequency jitter.
     #    span=5 → α ≈ 0.33, mild smoothing with low lag.
     ema_cols = ["temperature", "humidity", "pressure"]
     for col in ema_cols:

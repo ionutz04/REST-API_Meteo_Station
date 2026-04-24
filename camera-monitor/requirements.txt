@@ -1,0 +1,37 @@
+# Jetson Orin Nano (JetPack 6.x, Ubuntu 22.04, aarch64, CUDA 12, TensorRT 10).
+#
+# System prerequisites (one-time, via apt — installs CUDA, cuDNN, TensorRT):
+#   sudo apt update && sudo apt install -y nvidia-jetpack
+#
+# PyTorch on Jetson must come from NVIDIA's prebuilt aarch64+CUDA wheels,
+# NOT from PyPI (PyPI's torch is CPU-only on aarch64). Install it manually:
+#   pip install --upgrade pip
+#   pip install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v60/pytorch/torch-2.3.0-cp310-cp310-linux_aarch64.whl
+#   pip install torchvision==0.18.0 --no-deps
+# (See https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048 for the
+#  exact URL matching your JetPack version.)
+#
+# After PyTorch is in place, install the rest:
+#   pip install -r requirements.txt
+
+# --- core HTTP + env ---
+requests>=2.32
+python-dotenv>=1.0
+
+# --- camera capture + Qt UI (main.py) ---
+opencv-python>=4.9
+numpy>=1.26,<2.0
+PySide6>=6.6
+flask>=3.0
+
+# --- training + ONNX export (runs on the Orin's GPU) ---
+pandas>=2.2
+pillow>=10.2
+onnx>=1.16
+
+# --- TensorRT inference ---
+# `tensorrt` ships with JetPack and is importable as a system package.
+# If you create a venv, use `python -m venv --system-site-packages venv` so
+# the system tensorrt module is reachable. Otherwise uncomment the pip line.
+# tensorrt
+pycuda>=2024.1
